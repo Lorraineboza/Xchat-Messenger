@@ -63,7 +63,7 @@ typedef struct Peer {
     char alias[MAX_ALIAS];
 
     Profile profile;
-    GPtrArray *messages; // ChatMessage*
+    GPtrArray *messages; 
 
     GtkWidget *row;
     GtkWidget *name_label;
@@ -102,7 +102,7 @@ typedef struct {
     GtkWidget *me_name;
     GtkWidget *me_subtitle;
 
-    GPtrArray *peers; // Peer*
+    GPtrArray *peers;
     GMutex peers_mutex;
 
     Peer *active_peer;
@@ -496,13 +496,17 @@ static void profile_refresh_public_fields(Profile *profile) {
 
     if (profile->first_name[0] != '\0' && profile->last_name[0] != '\0') {
         g_snprintf(full_name, sizeof(full_name), "%s %s", profile->first_name, profile->last_name);
-    } else if (profile->first_name[0] != '\0') {
+    } 
+    else if (profile->first_name[0] != '\0') {
         g_strlcpy(full_name, profile->first_name, sizeof(full_name));
-    } else if (profile->last_name[0] != '\0') {
+    } 
+    else if (profile->last_name[0] != '\0') {
         g_strlcpy(full_name, profile->last_name, sizeof(full_name));
-    } else if (profile->username[0] != '\0') {
+    } 
+    else if (profile->username[0] != '\0') {
         g_strlcpy(full_name, profile->username, sizeof(full_name));
-    } else {
+    } 
+    else {
         g_strlcpy(full_name, "new_user", sizeof(full_name));
     }
 
@@ -622,11 +626,14 @@ static void update_me_panel(void) {
 
     if (app.me.first_name[0] != '\0' && app.me.last_name[0] != '\0') {
         g_snprintf(title, sizeof(title), "%s %s", app.me.first_name, app.me.last_name);
-    } else if (app.me.first_name[0] != '\0') {
+    }
+    else if (app.me.first_name[0] != '\0') {
         g_strlcpy(title, app.me.first_name, sizeof(title));
-    } else if (app.me.last_name[0] != '\0') {
+    } 
+    else if (app.me.last_name[0] != '\0') {
         g_strlcpy(title, app.me.last_name, sizeof(title));
-    } else {
+    } 
+    else {
         g_strlcpy(title, app.me.nickname, sizeof(title));
     }
 
@@ -754,7 +761,8 @@ static void set_active_peer(Peer *peer) {
         char subtitle[350];
         snprintf(subtitle, sizeof(subtitle), "@%s • %d лет", peer->profile.nickname, peer->profile.age);
         gtk_label_set_text(GTK_LABEL(app.chat_subtitle), subtitle);
-    } else {
+    } 
+    else {
         char subtitle[128];
         snprintf(subtitle, sizeof(subtitle), "%s:%d", peer->ip, peer->port);
         gtk_label_set_text(GTK_LABEL(app.chat_subtitle), subtitle);
@@ -837,14 +845,16 @@ static void append_message_row(ChatMessage *msg) {
         gtk_box_pack_start(GTK_BOX(wrap), left_spacer, TRUE, TRUE, 0);
         gtk_box_pack_start(GTK_BOX(wrap), bubble, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(wrap), right_spacer, TRUE, TRUE, 0);
-    } else if (msg->outgoing) {
+    } 
+    else if (msg->outgoing) {
         GtkWidget *text = build_bubble_label(msg->text, "msg-out", TRUE);
         gtk_style_context_add_class(gtk_widget_get_style_context(bubble), "bubble-out");
         gtk_box_pack_start(GTK_BOX(bubble), text, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(bubble), time_label, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(wrap), left_spacer, TRUE, TRUE, 0);
         gtk_box_pack_start(GTK_BOX(wrap), bubble, FALSE, FALSE, 0);
-    } else {
+    } 
+    else {
         GtkWidget *text = build_bubble_label(msg->text, "msg-in", TRUE);
         gtk_style_context_add_class(gtk_widget_get_style_context(bubble), "bubble-in");
         gtk_box_pack_start(GTK_BOX(bubble), text, FALSE, FALSE, 0);
@@ -917,7 +927,8 @@ static void apply_contacts_filter(void) {
         if (peer->row) {
             if (visible) {
                 gtk_widget_show(peer->row);
-            } else {
+            } 
+            else {
                 gtk_widget_hide(peer->row);
             }
         }
@@ -1069,7 +1080,8 @@ static void parse_hello(Peer *peer, const char *line) {
 static void parse_msg(Peer *peer, const char *line) {
     if (g_str_has_prefix(line, "MSG\t")) {
         queue_message(peer, FALSE, FALSE, line + 4);
-    } else {
+    } 
+    else {
         queue_message(peer, FALSE, FALSE, line);
     }
 }
@@ -1077,11 +1089,14 @@ static void parse_msg(Peer *peer, const char *line) {
 static void process_protocol_line(Peer *peer, const char *line) {
     if (g_str_has_prefix(line, "HELLO\t")) {
         parse_hello(peer, line);
-    } else if (g_str_has_prefix(line, "MSG\t")) {
+    }
+    else if (g_str_has_prefix(line, "MSG\t")) {
         parse_msg(peer, line);
-    } else if (strcmp(line, "BYE") == 0) {
+    } 
+    else if (strcmp(line, "BYE") == 0) {
         peer_disconnect_socket(peer);
-    } else {
+    } 
+    else {
         parse_msg(peer, line);
     }
 }
@@ -1522,7 +1537,8 @@ static void on_new_chat(GtkWidget *widget, gpointer data) {
 
         if (port <= 0 || port > 65535) {
             set_status("Ошибка: неверный порт");
-        } else if (connect_outbound(alias, ip, port, TRUE)) {
+        }
+        else if (connect_outbound(alias, ip, port, TRUE)) {
             set_status("Чат создан");
         }
     }
@@ -1914,7 +1930,8 @@ static void activate(GtkApplication *gtk_app, gpointer user_data) {
         char msg[256];
         snprintf(msg, sizeof(msg), "Сервер слушает 0.0.0.0:%d", APP_DEFAULT_PORT);
         set_status(msg);
-    } else {
+    } 
+    else {
         char msg[256];
         snprintf(msg, sizeof(msg), "Ошибка запуска сервера на порту %d", APP_DEFAULT_PORT);
         set_status(msg);
