@@ -2,4 +2,4 @@
 #define APP_TITLE "XChat Client"
 #define APP_ID "com.example.xchat.client"
 #define APP_DEFAULT_PORT 8080
-#include "xchat_core.inc"
+#include "xchat_core.c"
